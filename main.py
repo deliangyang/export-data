@@ -60,8 +60,18 @@ ws.append(['订单编号', '收件人', '手机', '地址', '发货信息', '数
 for item in items:
     t = items[item]
     order_no = ''
+    name, mobile, address = t['name'], t['mobile'], t['address']
     if t['address'] in address_order:
-        order_no = address_order[t['address']]
+        datum = address_order[t['address']]
+        name_mobile = name + mobile
+        if name_mobile in datum:
+            order_no = ', '.join(datum[name_mobile])
+        else:
+            tmp = []
+            for k in datum:
+                tmp += datum[k]
+            print(datum)
+            order_no = ', '.join(tmp)
     ws.append([
         order_no, t['name'], t['mobile'], t['address'], ', '.join(t['items']), str(t['count']).replace('.0', '')
     ])

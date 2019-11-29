@@ -10,3 +10,7 @@ def split(detail):
 
 
 split(a)
+
+a = [1, 3]
+b = [1, 2]
+print(a + b)
