@@ -12,7 +12,7 @@ all_data = []
 prev_row = [None for i in range(zl.ncols)]
 for row_index in range(1, zl.nrows - 1):
     row = []
-    for col_index in range(4):
+    for col_index in range(8):
         value = str(zl.cell(rowx=row_index, colx=col_index).value)
         if len(value) == 0:
             value = prev_row[col_index]
@@ -30,7 +30,7 @@ def split_item(detail):
         item = reg_detail.findall(detail)
     return item[0]
 
-
+count = 0
 items = {}
 for data in all_data:
     detail = data[1]
@@ -45,8 +45,14 @@ for data in all_data:
             "items": [],
         }
         items[detail] = tmp
+    print(data)
+    items[detail]['comment'] = data[7]
     items[detail]["count"] += int(str(data[3]).replace('.0', ''))
     items[detail]["items"].append("%sx%s" % (data[2], data[3].replace('.0', '')))
+    count += int(str(data[3]).replace('.0', ''))
+
+print(count)
+print("count:", len(all_data))
 
 wb = openpyxl.Workbook()
 ws = wb.active
@@ -56,7 +62,8 @@ with open('xx.json', 'r') as f:
     address_order = json.loads(f.read().encode('utf-8'))
     f.close()
 
-ws.append(['订单编号', '收件人', '手机', '地址', '发货信息', '数量'])
+count = 0
+ws.append(['订单编号', '收件人', '手机', '地址', '发货信息', '数量', '备注'])
 for item in items:
     t = items[item]
     order_no = ''
@@ -73,7 +80,10 @@ for item in items:
             print(datum)
             order_no = ', '.join(tmp)
     ws.append([
-        order_no, t['name'], t['mobile'], t['address'], ', '.join(t['items']), str(t['count']).replace('.0', '')
+        order_no, t['name'], t['mobile'], t['address'], ', '.join(t['items']),
+        str(t['count']).replace('.0', ''), t['comment']
     ])
-
+    count += int(str(t['count']).replace('.0', ''))
 wb.save("result.xlsx")
+
+print(count)
